@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Determinant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Determinant of a Matrix</h1>
+    <nav>
+        <ul>
+            <li><a href="multiplication.html">Matrix Multiplication</a></li>
+            <li><a href="addition+subtraction.html">Addition and Subtraction</a></li>
+            <li><a href="rref.html">Reduced Row Echelon Form (RREF)</a></li>
+        </ul>
+    </nav>
+
+    <div id="matrix-controls">
+        <label for="rows">Rows:</label>
+        <input type="number" id="rows" value="3">
+        <label for="cols">Columns:</label>
+        <input type="number" id="cols" value="3">
+    </div>
+
+    <div class="matrix-container" id="matrix-container">
+        <div class="matrix" id="matrix"></div>
+    </div>
+    <button class="calculate-button" onclick="calculate()">Calculate Determinant</button>
+    <div id="result"></div>
+
+    <script src="determinant.js"></script>
+</body>
+</html>

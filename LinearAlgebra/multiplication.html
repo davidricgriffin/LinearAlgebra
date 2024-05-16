@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Multiplication</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>Matrix Multiplication</h1>
+    <nav>
+        <ul>
+            <li><a href="determinant.html">Determinant</a></li>
+            <li><a href="addition+subtraction.html">Addition and Subtraction</a></li>
+            <li><a href="rref.html">Reduced Row Echelon Form (RREF)</a></li>
+        </ul>
+    </nav>
+
+    <div id="matrix-a-controls">
+        <label for="rows-a">Rows:</label>
+        <input type="number" id="rows-a" value="3">
+        <label for="cols-a">Columns:</label>
+        <input type="number" id="cols-a" value="3">
+    </div>
+    <div id="matrix-b-controls">
+        <label for="rows-b">Rows:</label>
+        <input type="number" id="rows-b" value="3">
+        <label for="cols-b">Columns:</label>
+        <input type="number" id="cols-b" value="3">
+    </div>
+    <div class="matrix-container" id="matrix-container">
+        <div class="matrix" id="matrix-a"></div>
+        <div class="matrix" id="matrix-b"></div>
+    </div>
+
+    <button class="calculate-button" onclick="calculate()">Calculate</button>
+    <div id="result"></div>
+
+    <script src="multiplication.js"></script>
+</body>
+</html>
