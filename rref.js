@@ -1,3 +1,52 @@
+
+function Fraction(numerator, denominator) {
+    this.numerator = numerator;
+    this.denominator = denominator;
+}
+
+Fraction.prototype.add = function(other) {
+    let numerator = this.numerator * other.denominator + this.denominator * other.numerator;
+    let denominator = this.denominator * other.denominator;
+    return new Fraction(numerator, denominator);
+}
+
+Fraction.prototype.subtract = function(other) {
+    let numerator = this.numerator * other.denominator - this.denominator * other.numerator;
+    let denominator = this.denominator * other.denominator;
+    return new Fraction(numerator, denominator);
+}
+
+Fraction.prototype.multiply = function(other) {
+    let numerator = this.numerator * other.numerator;
+    let denominator = this.denominator * other.denominator;
+    return new Fraction(numerator, denominator);
+}
+
+Fraction.prototype.divide = function(other) {
+    let numerator = this.numerator * other.denominator;
+    let denominator = this.denominator * other.numerator;
+    return new Fraction(numerator, denominator);
+}
+
+Fraction.prototype.toString = function() {
+    return `${this.numerator}/${this.denominator}`;
+}
+
+function gcd(a, b) {
+    if (b === 0) {
+        return a;
+    } else {
+        return gcd(b, a % b);
+    }
+}
+
+Fraction.prototype.simplify = function() {
+    let common = gcd(this.numerator, this.denominator);
+    this.numerator /= common;
+    this.denominator /= common;
+    return this;
+}
+
 let rowsInput = document.getElementById('rows');
 let colsInput = document.getElementById('cols');
 let matrixContainer = document.getElementById('matrix');
@@ -7,8 +56,8 @@ function generateMatrix(container, rows, cols) {
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
             let inputField = document.createElement('input');
-            inputField.type = 'number';
-            inputField.value = 0;
+            inputField.type = 'text';
+            inputField.value = '0';
             inputField.id = 'matrix-' + i + '-' + j;
             container.appendChild(inputField);
         }
@@ -24,18 +73,36 @@ function calculate() {
     for (let i = 0; i < rows; i++) {
         matrix[i] = [];
         for (let j = 0; j < cols; j++) {
-            matrix[i][j] = parseFloat(document.getElementById('matrix-' + i + '-' + j).value);
+            let inputValue = document.getElementById('matrix-' + i + '-' + j).value;
+            let fraction = parseFraction(inputValue);
+            matrix[i][j] = fraction;
         }
     }
 
     let rref = reducedRowEchelonForm(matrix);
 
-    document.getElementById('result').innerHTML = '';
+    let resultHtml = '';
     for (let i = 0; i < rref.length; i++) {
         for (let j = 0; j < rref[i].length; j++) {
-            document.getElementById('result').innerHTML += rref[i][j] + ' ';
+            let fraction = rref[i][j].simplify();
+            if (fraction.denominator === 1) {
+                resultHtml += `<input type="text" value="${fraction.numerator}" readonly>`;
+            } else {
+                resultHtml += `<input type="text" value="${fraction.toString()}" readonly>`;
+            }
         }
-        document.getElementById('result').innerHTML += '<br>';
+        resultHtml += '<br>';
+    }
+
+    document.getElementById('result').innerHTML = resultHtml;
+}
+
+function parseFraction(inputValue) {
+    let parts = inputValue.split('/');
+    if (parts.length == 2) {
+        return new Fraction(parseInt(parts[0]), parseInt(parts[1]));
+    } else {
+        return new Fraction(parseInt(inputValue), 1);
     }
 }
 
@@ -46,7 +113,7 @@ function reducedRowEchelonForm(matrix) {
             return matrix;
         }
         let i = r;
-        while (matrix[i][lead] == 0) {
+        while (matrix[i][lead].numerator == 0) {
             i++;
             if (matrix.length == i) {
                 i = r;
@@ -62,14 +129,14 @@ function reducedRowEchelonForm(matrix) {
 
         let val = matrix[r][lead];
         for (let j = 0; j < matrix[0].length; j++) {
-            matrix[r][j] /= val;
+            matrix[r][j] = matrix[r][j].divide(val);
         }
 
         for (let i = 0; i < matrix.length; i++) {
             if (i != r) {
                 let val = matrix[i][lead];
                 for (let j = 0; j < matrix[0].length; j++) {
-                    matrix[i][j] -= val * matrix[r][j];
+                    matrix[i][j] = matrix[i][j].subtract(val.multiply(matrix[r][j]));
                 }
             }
         }

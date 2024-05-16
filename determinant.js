@@ -1,3 +1,52 @@
+
+function Fraction(numerator, denominator) {
+    this.numerator = numerator;
+    this.denominator = denominator;
+}
+
+Fraction.prototype.add = function(other) {
+    let numerator = this.numerator * other.denominator + this.denominator * other.numerator;
+    let denominator = this.denominator * other.denominator;
+    return new Fraction(numerator, denominator);
+}
+
+Fraction.prototype.subtract = function(other) {
+    let numerator = this.numerator * other.denominator - this.denominator * other.numerator;
+    let denominator = this.denominator * other.denominator;
+    return new Fraction(numerator, denominator);
+}
+
+Fraction.prototype.multiply = function(other) {
+    let numerator = this.numerator * other.numerator;
+    let denominator = this.denominator * other.denominator;
+    return new Fraction(numerator, denominator);
+}
+
+Fraction.prototype.divide = function(other) {
+    let numerator = this.numerator * other.denominator;
+    let denominator = this.denominator * other.numerator;
+    return new Fraction(numerator, denominator);
+}
+
+Fraction.prototype.toString = function() {
+    return `${this.numerator}/${this.denominator}`;
+}
+
+function gcd(a, b) {
+    if (b === 0) {
+        return a;
+    } else {
+        return gcd(b, a % b);
+    }
+}
+
+Fraction.prototype.simplify = function() {
+    let common = gcd(this.numerator, this.denominator);
+    this.numerator /= common;
+    this.denominator /= common;
+    return this;
+}
+
 let rows = 3;
 let cols = 3;
 
@@ -15,8 +64,8 @@ function createMatrix() {
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
             let inputField = document.createElement('input');
-            inputField.type = 'number';
-            inputField.value = 0;
+            inputField.type = 'text'; // Change this to text to allow fraction input
+            inputField.value = '0'; // Initialize the input box with a value of zero
             matrixContainer.appendChild(inputField);
         }
         matrixContainer.innerHTML += '<br>';
@@ -41,7 +90,12 @@ function calculate() {
     for (let i = 0; i < rows; i++) {
         let row = [];
         for (let j = 0; j < cols; j++) {
-            row.push(parseFloat(inputs[i * cols + j].value));
+            let inputValue = inputs[i * cols + j].value;
+            let parts = inputValue.split('/');
+            let numerator = parseInt(parts[0]);
+            let denominator = parts.length > 1 ? parseInt(parts[1]) : 1;
+            let fraction = new Fraction(numerator, denominator);
+            row.push(fraction);
         }
         matrix.push(row);
     }
@@ -49,16 +103,24 @@ function calculate() {
     // Calculate the determinant
     let determinant = calculateDeterminant(matrix);
 
+    // Simplify the determinant
+    determinant = determinant.simplify();
+
     // Display the result
-    document.getElementById('result').innerHTML = `Determinant: ${determinant}`;
+    if (determinant.denominator === 1) {
+        document.getElementById('result').innerHTML = `Determinant: ${determinant.numerator}`;
+    } else {
+        document.getElementById('result').innerHTML = `Determinant: ${determinant.toString()}`;
+    }
 }
 
+// Update the calculateDeterminant function to work with fractions
 function calculateDeterminant(matrix) {
     if (matrix.length === 2) {
-        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+        return matrix[0][0].multiply(matrix[1][1]).subtract(matrix[0][1].multiply(matrix[1][0]));
     }
 
-    let determinant = 0;
+    let determinant = new Fraction(0, 1);
     for (let i = 0; i < matrix.length; i++) {
         // Create a sub-matrix by removing the current row and column
         let subMatrix = [];
@@ -76,10 +138,10 @@ function calculateDeterminant(matrix) {
         let subDeterminant = calculateDeterminant(subMatrix);
 
         // Calculate the cofactor
-        let cofactor = Math.pow(-1, i) * matrix[0][i] * subDeterminant;
+        let cofactor = new Fraction(Math.pow(-1, i), 1).multiply(matrix[0][i]).multiply(subDeterminant);
 
         // Add the cofactor to the determinant
-        determinant += cofactor;
+        determinant = determinant.add(cofactor);
     }
 
     return determinant;

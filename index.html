@@ -18,24 +18,29 @@
         </ul>
     </nav>
 
-    <div id="matrix-a-controls">
-        <label for="rows-a">Rows:</label>
-        <input type="number" id="rows-a" value="3">
-        <label for="cols-a">Columns:</label>
-        <input type="number" id="cols-a" value="3">
-    </div>
-    <div id="matrix-b-controls">
-        <label for="rows-b">Rows:</label>
-        <input type="number" id="rows-b" value="3">
-        <label for="cols-b">Columns:</label>
-        <input type="number" id="cols-b" value="3">
-    </div>
-    <div class="matrix-container" id="matrix-container">
+    <div class="matrix-container">
+        <div id="matrix-a-controls">
+            <label for="rows-a"></label>
+            <input type="number" id="rows-a" value="3">
+            <label for="cols-a">X</label>
+            <input type="number" id="cols-a" value="3">
+        </div>
         <div class="matrix" id="matrix-a"></div>
+    </div>
+    
+    <div class="matrix-container">
+        <div id="matrix-b-controls">
+            <label for="rows-b"></label>
+            <input type="number" id="rows-b" value="3">
+            <label for="cols-b">X</label>
+            <input type="number" id="cols-b" value="3">
+        </div>
         <div class="matrix" id="matrix-b"></div>
     </div>
 
-    <button class="calculate-button" onclick="calculate()">Calculate</button>
+    <div class="calculate-button-container">
+        <button class="calculate-button" onclick="calculate()">Calculate</button>
+    </div>
     <div id="result"></div>
 
     <script src="multiplication.js"></script>

@@ -1,3 +1,52 @@
+
+function Fraction(numerator, denominator) {
+    this.numerator = numerator;
+    this.denominator = denominator;
+}
+
+Fraction.prototype.add = function(other) {
+    let numerator = this.numerator * other.denominator + this.denominator * other.numerator;
+    let denominator = this.denominator * other.denominator;
+    return new Fraction(numerator, denominator);
+}
+
+Fraction.prototype.subtract = function(other) {
+    let numerator = this.numerator * other.denominator - this.denominator * other.numerator;
+    let denominator = this.denominator * other.denominator;
+    return new Fraction(numerator, denominator);
+}
+
+Fraction.prototype.multiply = function(other) {
+    let numerator = this.numerator * other.numerator;
+    let denominator = this.denominator * other.denominator;
+    return new Fraction(numerator, denominator);
+}
+
+Fraction.prototype.divide = function(other) {
+    let numerator = this.numerator * other.denominator;
+    let denominator = this.denominator * other.numerator;
+    return new Fraction(numerator, denominator);
+}
+
+Fraction.prototype.toString = function() {
+    return `${this.numerator}/${this.denominator}`;
+}
+
+function gcd(a, b) {
+    if (b === 0) {
+        return a;
+    } else {
+        return gcd(b, a % b);
+    }
+}
+
+Fraction.prototype.simplify = function() {
+    let common = gcd(this.numerator, this.denominator);
+    this.numerator /= common;
+    this.denominator /= common;
+    return this;
+}
+
 let rowsInput = document.getElementById('rows');
 let colsInput = document.getElementById('cols');
 let matrixAContainer = document.getElementById('matrix-a');
@@ -10,8 +59,8 @@ function generateMatrix(container, rows, cols) {
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
             let inputField = document.createElement('input');
-            inputField.type = 'number';
-            inputField.value = 0;
+            inputField.type = 'text'; // Allow users to enter fractions
+            inputField.value = '0'; // Default value is 0/1
             inputField.id = container.id + '-' + i + '-' + j;
             container.appendChild(inputField);
         }
@@ -29,8 +78,10 @@ function calculate() {
         matrixA[i] = [];
         matrixB[i] = [];
         for (let j = 0; j < cols; j++) {
-            matrixA[i][j] = parseFloat(document.getElementById('matrix-a-' + i + '-' + j).value);
-            matrixB[i][j] = parseFloat(document.getElementById('matrix-b-' + i + '-' + j).value);
+            let valueA = document.getElementById('matrix-a-' + i + '-' + j).value
+            let valueB = document.getElementById('matrix-b-' + i + '-' + j).value
+            matrixA[i][j] = parseFraction(valueA)
+            matrixB[i][j] = parseFraction(valueB)
         }
     }
 
@@ -41,13 +92,20 @@ function calculate() {
         result = subtractMatrices(matrixA, matrixB);
     }
 
-    document.getElementById('result').innerHTML = '';
+    let resultHtml = '';
     for (let i = 0; i < result.length; i++) {
         for (let j = 0; j < result[i].length; j++) {
-            document.getElementById('result').innerHTML += result[i][j] + ' ';
+            let fraction = result[i][j];
+            if (fraction.denominator === 1) {
+                resultHtml += `<input type="text" value="${fraction.numerator}" readonly>`;
+            } else {
+                resultHtml += `<input type="text" value="${fraction.toString()}" readonly>`;
+            }
         }
-        document.getElementById('result').innerHTML += '<br>';
+        resultHtml += '<br>';
     }
+
+    document.getElementById('result').innerHTML = resultHtml;
 }
 
 function addMatrices(a, b) {
@@ -55,7 +113,7 @@ function addMatrices(a, b) {
     for (let i = 0; i < a.length; i++) {
         result[i] = [];
         for (let j = 0; j < a[0].length; j++) {
-            result[i][j] = a[i][j] + b[i][j];
+            result[i][j] = a[i][j].add(b[i][j]);
         }
     }
     return result;
@@ -66,10 +124,19 @@ function subtractMatrices(a, b) {
     for (let i = 0; i < a.length; i++) {
         result[i] = [];
         for (let j = 0; j < a[0].length; j++) {
-            result[i][j] = a[i][j] - b[i][j];
+            result[i][j] = a[i][j].subtract(b[i][j]);
         }
     }
     return result;
+}
+
+function parseFraction(str) {
+    let parts = str.split('/');
+    if (parts.length === 1) {
+        return new Fraction(parseInt(parts[0]), 1);
+    } else {
+        return new Fraction(parseInt(parts[0]), parseInt(parts[1]));
+    }
 }
 
 operationButton.addEventListener('click', () => {
